@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         int sum = strtol(argv[2], &endptr2, 10);
         
         int id = shmget(IPC_PRIVATE, sizeof(int),IPC_CREAT|0700);
-        volatile int *p =shmat(id, NULL,0);
+        int *p =shmat(id, NULL,0);
         printf("%d\n",*p);
 
         int semid = semget(IPC_PRIVATE,1,IPC_CREAT|0700);
@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
         sops.sem_op=1;
         sops.sem_flg=0;
 
-        semop(semid, &sops,1);
-        if(semop(semid, &sops,1)<0)
+        int res = 0;
+        if((res=semop(semid, &sops,1))<0)
             perror("semop init\n");
 
         for(int i = 0; i<num; i++){
